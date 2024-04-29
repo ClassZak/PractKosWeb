@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System;
 using System.IO;
+using System.Windows;
 
 namespace ClientWPFGUI
 {
@@ -41,11 +42,24 @@ namespace ClientWPFGUI
 
         private void SaveUsernameToFile()
         {
-            File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), FILENAME), Username);
+            File.Delete(Path.Combine(Directory.GetCurrentDirectory(), FILENAME));
+
+            StreamWriter streamWriter = new StreamWriter(new FileStream(FILENAME, FileMode.Create, FileAccess.Write));
+            streamWriter.WriteLine(Username);
+            streamWriter.Close();
         }
         private void LoadUsernameFromFile()
         {
-            Username = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), FILENAME));
+            try
+            {
+                StreamReader streamReader = new StreamReader(new FileStream(FILENAME, FileMode.Open, FileAccess.Read));
+                Username = streamReader.ReadLine();
+                streamReader.Close();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Ошибка при открытии файла настроек\n\n"+ex.Message,"Ошибка настроек",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
         }
     }
 }

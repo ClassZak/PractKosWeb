@@ -25,8 +25,6 @@ namespace ClientWPFGUI
         {
             InitializeComponent();
             this.UserNameBox.Text=userSettingsManager.Username;
-
-            
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
@@ -53,28 +51,46 @@ namespace ClientWPFGUI
 
 
 
-        private async void UpdateView()
+        private void UpdateView()
         {
-            await Task.Run(() =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    ListViewItem item = new ListViewItem();
-
-                if (Service.Messages.Count == 0)
-                    Thread.Sleep(5000);
-                if (Service.Messages.Count == 0)
-                {
-                    MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
             
-                var data = new {  ID = Service.Messages.Last().Id, Column2 = "Данные2", Column3 = "Данные3", Column4 = "Данные4" };
+
+            bool serverFailed=false;
+            serverFailed = Task.Run<bool>(() =>
+            {
+                if(Service.Messages.Count == 0)
+                Thread.Sleep(5000);
+                return Service.Messages.Count == 0;
+            }).Result;
+
+
+
+            while (Service.Messages.Count == 0)
+                if (serverFailed) break;
+
+            if (Service.Messages.Count == 0)
+            {
+                MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            //this.LV_Messages.Items.Clear();
+            foreach(var mItem in  Service.Messages)
+            {
+                ListViewItem item = new ListViewItem();
+                var data = new
+                { 
+                    ID = mItem.Id, 
+                    User = mItem.Username, 
+                    Time = mItem.DateTime.ToUniversalTime().ToString(), 
+                    Message = mItem.Content 
+                };
                 item.Content = data;
                 this.LV_Messages.Items.Add(item);
-                });
+            }
+
+            
                 
-            });
         }
 
 
