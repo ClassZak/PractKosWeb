@@ -66,7 +66,10 @@ namespace Service
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
 
+
+                Console.ForegroundColor= ConsoleColor.Green;
                 Console.WriteLine(responseBody);
+                Console.ResetColor();
             }
             catch (HttpRequestException e)
             {
