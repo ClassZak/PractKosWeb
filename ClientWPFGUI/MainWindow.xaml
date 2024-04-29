@@ -34,8 +34,8 @@
             </Grid.RowDefinitions>
 
             <Label Content="Пользователь:" FontSize="32" Margin="10, 0, 10, 10"/>
-            <TextBox Name="UserNameBox" FontSize="30" Margin="10, 50, 10, 10"/>
-            <Button Name="UserNameUse" Click="UserNameUse_Click" Content="Использовать" FontSize="20" VerticalContentAlignment="Top" Grid.Column="1" Margin="10, 50, 10, 10"/>
+            <TextBox Name="UserNameBox" FontSize="30" Margin="10, 50, 10, 10" IsReadOnly="True"/>
+            <Button Name="UserNameUse" Click="UserNameUse_Click" Content="Переименовать" FontSize="20" VerticalContentAlignment="Top" Grid.Column="1" Margin="10, 50, 10, 10"/>
 
             <ListView Name="LV_Messages" Grid.Row="1" Grid.ColumnSpan="3" Margin="10"/>
 

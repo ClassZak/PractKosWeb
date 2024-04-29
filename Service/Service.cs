@@ -61,22 +61,27 @@ namespace Service
         }
         public async void Get(Uri uri)
         {
-            HttpClient client = new HttpClient();
-            try
+            await Task.Run(() =>
             {
-                HttpResponseMessage response = await client.GetAsync(uri);
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
+                HttpClient client = new HttpClient();
+                try
+                {
+                    HttpResponseMessage response = client.GetAsync(uri).Result;
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = response.Content.ReadAsStringAsync().Result;
 
-                Console.WriteLine(responseBody);
-            }
-            catch (HttpRequestException e)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.Message);
-                Console.ResetColor();
-                throw;
-            }
+                    Console.WriteLine(responseBody);
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(e.Message);
+                    Console.ResetColor();
+                    throw;
+                }
+            });
+
+            
         }
 
 

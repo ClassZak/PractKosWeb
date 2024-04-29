@@ -20,21 +20,30 @@ namespace ClientWPFGUI
         static private Service.Service Service =
             new Service.Service("localhost",5250);
 
-        private string Username = "";
+        static private UserSettingsManager userSettingsManager = new UserSettingsManager();
         public MainWindow()
         {
             InitializeComponent();
+            this.UserNameBox.Text=userSettingsManager.Username;
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
         {
-
+            UsernameDialog dlg = new UsernameDialog(userSettingsManager.Username);
+            dlg.ShowDialog();
+            userSettingsManager.SetUsername(dlg.username);
+            this.UserNameBox.Text = userSettingsManager.Username;
         }
 
         private void SendMessage_Click(object sender, RoutedEventArgs e)
         {
-            Username=this.UserNameBox.Text;
-            Service.Post(new ModelsLibrary.Messages.MessageRequest(this.Input.Text, Username));
+            Service.Post
+            (
+                new ModelsLibrary.Messages.MessageRequest
+                (
+                    this.Input.Text, userSettingsManager.Username
+                )
+            );
         }
     }
 }
