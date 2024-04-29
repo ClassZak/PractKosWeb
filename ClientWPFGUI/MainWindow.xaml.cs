@@ -25,6 +25,8 @@ namespace ClientWPFGUI
         {
             InitializeComponent();
             this.UserNameBox.Text=userSettingsManager.Username;
+
+            
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
@@ -44,6 +46,57 @@ namespace ClientWPFGUI
                     this.Input.Text, userSettingsManager.Username
                 )
             );
+            Service.Get();
+            UpdateView();
+            //MessageBox.Show(this.LV_Messages.DataContext.ToString(), "");
+        }
+
+
+
+        private async void UpdateView()
+        {
+            await Task.Run(() =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    ListViewItem item = new ListViewItem();
+
+                if (Service.Messages.Count == 0)
+                    Thread.Sleep(5000);
+                if (Service.Messages.Count == 0)
+                {
+                    MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            
+                var data = new {  ID = Service.Messages.Last().Id, Column2 = "Данные2", Column3 = "Данные3", Column4 = "Данные4" };
+                item.Content = data;
+                this.LV_Messages.Items.Add(item);
+                });
+                
+            });
+        }
+
+
+        private async void UpdateWaiting()
+        {
+            bool serverFailed = true;
+            await Task.Run(async () =>
+            {
+                await Task.Run(() =>
+                {
+                    while(true)
+                    if (Service.Messages.Count != 0)
+                        serverFailed = false;
+                });
+                Thread.Sleep(5000);
+                    
+            });
+            if(serverFailed)
+            {
+                MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
         }
     }
 }

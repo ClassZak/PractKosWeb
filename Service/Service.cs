@@ -69,8 +69,28 @@ namespace Service
                     HttpResponseMessage response = client.GetAsync(uri).Result;
                     response.EnsureSuccessStatusCode();
                     string responseBody = response.Content.ReadAsStringAsync().Result;
-
+                    
+                    try
+                    {
+                        Messages = JsonConvert.DeserializeObject<List<MessageResponse>>(responseBody);
+                        if(Messages is null || Messages.Count==0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Не удалось создать список сообщений");
+                            Console.ResetColor();
+                            return;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                    
                     Console.WriteLine(responseBody);
+                    foreach(var i in  Messages)
+                    {
+                        Console.WriteLine($"{i.Content}\n");
+                    }
                 }
                 catch (HttpRequestException e)
                 {
@@ -80,8 +100,6 @@ namespace Service
                     throw;
                 }
             });
-
-            
         }
 
 
