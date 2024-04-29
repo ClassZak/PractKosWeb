@@ -91,10 +91,10 @@ namespace ClientWPFGUI
                     return;
                 }
 
-                //this.LV_Messages.Items.Clear();
+                //this.listViewMessages.Items.Clear();
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    this.LV_Messages.Items.Clear();
+                    this.listViewMessages.Items.Clear();
                     foreach (var mItem in  Service.Messages)
                     {
                         ListViewItem item = new ListViewItem();
@@ -106,7 +106,7 @@ namespace ClientWPFGUI
                             Message = mItem.Content 
                         };
                         item.Content = data;
-                        this.LV_Messages.Items.Add(item);
+                        this.listViewMessages.Items.Add(item);
                     } 
                 }));
             });
