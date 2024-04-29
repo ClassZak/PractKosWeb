@@ -37,57 +37,81 @@ namespace ClientWPFGUI
 
         private void SendMessage_Click(object sender, RoutedEventArgs e)
         {
-            Service.Post
-            (
-                new ModelsLibrary.Messages.MessageRequest
+            try
+            {
+                Service.PostAsyncDesktop
                 (
-                    this.Input.Text, userSettingsManager.Username
-                )
-            );
-            Service.Get();
-            UpdateView();
-            //MessageBox.Show(this.LV_Messages.DataContext.ToString(), "");
+                    new ModelsLibrary.Messages.MessageRequest
+                    (
+                        this.Input.Text, userSettingsManager.Username
+                    )
+                );
+                UpdateView();
+            }
+            catch (System.Net.Http.HttpRequestException)
+            {
+                MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message,"Ошибка",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
         }
 
 
 
         private void UpdateView()
         {
+            Task.Run(() =>
+            {
+                Thread.Sleep(2000);
+                Service.GetAsyncDesktop();
+
+
+                bool serverFailed=false;
+                serverFailed = Task.Run<bool>(() =>
+                {
+                    for (byte i=0;i!=50;++i)
+                    {
+                        Thread.Sleep(100);
+                        if (Service.Messages.Count != 0)
+                            return false;
+                    }
+                    return Service.Messages.Count == 0;
+                }).Result;
+
+
+
+                while (Service.Messages.Count == 0)
+                    if (serverFailed) break;
+
+                if (Service.Messages.Count == 0)
+                {
+                    MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                //this.LV_Messages.Items.Clear();
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    this.LV_Messages.Items.Clear();
+                    foreach (var mItem in  Service.Messages)
+                    {
+                        ListViewItem item = new ListViewItem();
+                        var data = new
+                        { 
+                            ID = mItem.Id, 
+                            User = mItem.Username, 
+                            Time = mItem.DateTime.ToUniversalTime().ToString(), 
+                            Message = mItem.Content 
+                        };
+                        item.Content = data;
+                        this.LV_Messages.Items.Add(item);
+                    } 
+                }));
+            });
+
             
-
-            bool serverFailed=false;
-            serverFailed = Task.Run<bool>(() =>
-            {
-                if(Service.Messages.Count == 0)
-                Thread.Sleep(5000);
-                return Service.Messages.Count == 0;
-            }).Result;
-
-
-
-            while (Service.Messages.Count == 0)
-                if (serverFailed) break;
-
-            if (Service.Messages.Count == 0)
-            {
-                MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            //this.LV_Messages.Items.Clear();
-            foreach(var mItem in  Service.Messages)
-            {
-                ListViewItem item = new ListViewItem();
-                var data = new
-                { 
-                    ID = mItem.Id, 
-                    User = mItem.Username, 
-                    Time = mItem.DateTime.ToUniversalTime().ToString(), 
-                    Message = mItem.Content 
-                };
-                item.Content = data;
-                this.LV_Messages.Items.Add(item);
-            }
 
             
                 

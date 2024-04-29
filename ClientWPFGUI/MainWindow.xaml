@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientWPFGUI"
         mc:Ignorable="d"
-        Title="Messanger" Height="470" Width="640">
+        Title="Messanger"
+        Height="480" Width="640"
+        MinHeight="480" MinWidth="640" 
+        >
     <Grid>
 
         <Grid.ColumnDefinitions>
@@ -28,16 +31,18 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="100"></RowDefinition>
                 <RowDefinition Height="250"></RowDefinition>
-                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Label Content="Пользователь:" FontSize="32" Margin="10, 0, 10, 10"/>
-            <TextBox Name="UserNameBox" FontSize="30" Margin="10, 50, 10, 10" IsReadOnly="True"/>
-            <Button Name="UserNameUse" Click="UserNameUse_Click" Content="Переименовать" FontSize="20" VerticalContentAlignment="Top" Grid.Column="1" Margin="10, 50, 10, 10"/>
+            <Label Content="Пользователь:" Grid.Row="1" FontSize="32" Margin="10, 0, 10, 10"/>
+            <TextBox Name="UserNameBox" Grid.Row="1" FontSize="30" Margin="10, 50, 10, 10" IsReadOnly="True"/>
+            <Button Name="UserNameUse" Grid.Row="1" Click="UserNameUse_Click" Content="Переименовать" FontSize="20" VerticalContentAlignment="Top" Grid.Column="1" Margin="10, 50, 10, 10"/>
 
-            <ListView Name="LV_Messages" Grid.Row="1" Grid.ColumnSpan="3" Margin="10">
+            <ListView Name="LV_Messages" Grid.Row="2" Grid.ColumnSpan="3" Margin="10">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=ID}" Header="ID" Width="30"></GridViewColumn>
@@ -48,8 +53,16 @@
                 </ListView.View>
             </ListView>
 
-            <TextBox Text="Введите своё сообщение . . ." FontSize="16" Grid.Row="2" Grid.ColumnSpan="2" Margin="10" Name="Input"/>
-            <Button Name="SendMessage" Click="SendMessage_Click" Content="Отправить" FontSize="20" Grid.Row="2" Grid.Column="3" Margin="10"/>
+            <TextBox Grid.Row="3" Grid.ColumnSpan="2" Margin="10" Name="Input"/>
+            <Button
+                Name="SendMessage" 
+                Click="SendMessage_Click" 
+                Content="Отправить" 
+                Grid.Row="3" 
+                Grid.Column="2"
+                Margin="10"
+                Height="20"
+                />
         </Grid>
     </Grid>
 </Window>
