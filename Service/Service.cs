@@ -27,7 +27,23 @@ namespace Service
         }
         public Service(string IP, int port) : this()
         {
+            SetNewAddress(IP, port);
+        }
+
+
+
+
+        public void SetNewAddress(string IP, int port)
+        {
             this.Uri = new Uri($"http://{IP}:{port}/api/messages");
+        }
+        public void SetNewAddress(string IP, string port)
+        {
+            this.Uri = new Uri($"http://{IP}:{port}/api/messages");
+        }
+        public void SetNewAddress(Uri uri)
+        {
+            this.Uri = uri;
         }
 
 

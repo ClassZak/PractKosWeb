@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:ClientWPFGUI"
         mc:Ignorable="d"
         Title="Messanger"
-        Height="390" Width="640"
-        MinHeight="390" MinWidth="640" 
+        Height="430" Width="640"
+        MinHeight="430" MinWidth="640" 
         Background="AliceBlue"
         >
     <Grid>
@@ -32,32 +32,63 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="40"></RowDefinition>
                 <RowDefinition Height="60"></RowDefinition>
                 <RowDefinition Height="250"></RowDefinition>
                 <RowDefinition Height="40"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Label Content="Пользователь:" Grid.Row="0" Margin="10, 0, 0, 0"/>
-            <TextBox Name="UserNameBox" Grid.Row="0" Margin="10, 30, 10, 10" IsReadOnly="True" Grid.ColumnSpan="2"/>
-            <Button Name="UserNameUse" Grid.Row="0" Click="UserNameUse_Click" Content="Переименовать" Grid.Column="2" Margin="10, 30, 10, 10"/>
+            <Label 
+                Content="Сервер" 
+                Margin="10,5,0,0"
+                />
+            <Label 
+                Content="IP:" 
+                Margin="235,5,0,0" 
+                />
+            <TextBox 
+                Name="IPBox"
+                Grid.Column="1" 
+                Margin="10,10,50,10"
+                Text="localhost"
+                />
+            
+            
+            <Label 
+                Content="Порт:" 
+                Margin="170,5,0,0" 
+                Grid.Column="1"
+                />
+            <TextBox 
+                Name="PortBox"
+                Grid.Column="2" 
+                Margin="10"
+                Text="5250"
+                PreviewTextInput="TextBox_PreviewTextInput"
+                />
 
-            <ListView Name="listViewMessages" Grid.Row="1" Grid.ColumnSpan="3" Margin="10">
+
+            <Label Content="Пользователь:" Grid.Row="1" Margin="10, 0, 0, 0"/>
+            <TextBox Name="UserNameBox" Grid.Row="1" Margin="10, 30, 10, 10" IsReadOnly="True" Grid.ColumnSpan="2"/>
+            <Button Name="UserNameUse" Grid.Row="1" Click="UserNameUse_Click" Content="Переименовать" Grid.Column="2" Margin="10, 30, 10, 10"/>
+
+            <ListView Name="listViewMessages" Grid.Row="2" Grid.ColumnSpan="3" Margin="10" FontFamily="Consolas">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=ID}" Header="ID" Width="30"></GridViewColumn>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=User}" Header="Пользователь" Width="100"></GridViewColumn>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" Header="Время" Width="100"></GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" Header="Время" Width="150"></GridViewColumn>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=Message}" Header="Сообщение" Width="375"></GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
 
-            <TextBox Grid.Row="2" Grid.ColumnSpan="2" Margin="10" Height="20" Name="Input"/>
+            <TextBox Grid.Row="3" Grid.ColumnSpan="2" Margin="10" Height="20" Name="Input"/>
             <Button
                 Name="SendMessage" 
                 Click="SendMessage_Click" 
                 Content="Отправить" 
-                Grid.Row="2" 
+                Grid.Row="3" 
                 Grid.Column="2"
                 Margin="10"
                 Height="20"

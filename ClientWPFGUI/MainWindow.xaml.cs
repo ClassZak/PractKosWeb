@@ -39,6 +39,18 @@ namespace ClientWPFGUI
         {
             try
             {
+                Service.SetNewAddress(this.IPBox.Text,this.PortBox.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Неверный адрес сервера", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+
+
+            try
+            {
                 Service.PostAsyncDesktop
                 (
                     new ModelsLibrary.Messages.MessageRequest
@@ -110,6 +122,13 @@ namespace ClientWPFGUI
                     } 
                 }));
             });
+        }
+
+
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+                e.Handled = true;
         }
     }
 }
