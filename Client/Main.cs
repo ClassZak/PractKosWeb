@@ -62,6 +62,9 @@ namespace Client
                 service.Post(new ModelsLibrary.Messages.MessageRequest(message, username));
                 Thread.Sleep(5000);
                 service.Get();
+                Console.WriteLine("Для повторного ввода нажмите любую клавишу . . .");
+                Console.ReadKey(true);
+                Console.Clear();
             }
 
         }

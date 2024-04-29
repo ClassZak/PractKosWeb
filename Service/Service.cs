@@ -32,7 +32,7 @@ namespace Service
 
 
 
-        public async void Post(ModelsLibrary.Messages.MessageRequest message,Uri uri)
+        public async void Post(ModelsLibrary.Messages.MessageRequest message, Uri uri)
         {
             HttpClient client = new HttpClient();
             StringContent content = new StringContent
@@ -53,8 +53,10 @@ namespace Service
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine("Message :{0} ", e.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.Message);
+                Console.ResetColor();
+                throw;
             }
         }
         public async void Get(Uri uri)
@@ -70,8 +72,10 @@ namespace Service
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine("Message :{0} ", e.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.Message);
+                Console.ResetColor();
+                throw;
             }
         }
 
@@ -80,21 +84,11 @@ namespace Service
 
         public void Post(ModelsLibrary.Messages.MessageRequest message)
         {
-            this.Post(message,this.Uri);
+            this.Post(message, this.Uri);
         }
         public void Get()
         {
             this.Get(this.Uri);
         }
-
-
-
-
-
-
-
-
-
-
     }
 }
