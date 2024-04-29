@@ -110,33 +110,6 @@ namespace ClientWPFGUI
                     } 
                 }));
             });
-
-            
-
-            
-                
-        }
-
-
-        private async void UpdateWaiting()
-        {
-            bool serverFailed = true;
-            await Task.Run(async () =>
-            {
-                await Task.Run(() =>
-                {
-                    while(true)
-                    if (Service.Messages.Count != 0)
-                        serverFailed = false;
-                });
-                Thread.Sleep(5000);
-                    
-            });
-            if(serverFailed)
-            {
-                MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
         }
     }
 }
