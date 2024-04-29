@@ -114,7 +114,7 @@ namespace ClientWPFGUI
                         { 
                             ID = mItem.Id, 
                             User = mItem.Username, 
-                            Time = mItem.DateTime.ToUniversalTime().ToString(), 
+                            Time = mItem.DateTime.ToShortDateString()+" "+ mItem.DateTime.ToShortTimeString()+":"+ mItem.DateTime.Second,
                             Message = mItem.Content 
                         };
                         item.Content = data;
