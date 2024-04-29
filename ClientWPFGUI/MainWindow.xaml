@@ -8,6 +8,7 @@
         Title="Messanger"
         Height="390" Width="640"
         MinHeight="390" MinWidth="640" 
+        Background="AliceBlue"
         >
     <Grid>
 
