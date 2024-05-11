@@ -4,30 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientWPFGUI.ClassesForUsers
+namespace ModelsLibrary.UserModels
 {
-    public class UserAuthorizationArg
+    public class UserAuthorizationArg : AUser
     {
-        public string Name { get; set; }
-        public string Password { get; set; }
-        public string Token {  get; set; }
-
-
-        public UserAuthorizationArg()
+        #region Constructors
+        public UserAuthorizationArg() : base()
         {
-            Name = string.Empty;
-            Password = string.Empty;
             Token=GenerateToken();
         }
-        public UserAuthorizationArg(string name,string password) : this()
+        public UserAuthorizationArg(string name, string password, string token) : base(name, password, token)
         {
-            Name = name;
-            Password = password;
         }
         public UserAuthorizationArg(UserAuthorizationArg userAuthorizationArg) :
-            this(userAuthorizationArg.Name,userAuthorizationArg.Password)
+            base(userAuthorizationArg.Name, userAuthorizationArg.Password, userAuthorizationArg.Token)
         {
         }
+        public UserAuthorizationArg(UserAuthorizationArg userAuthorizationArg, string token) : base(userAuthorizationArg)
+        {
+        }
+        #endregion
 
 
 
