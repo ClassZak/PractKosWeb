@@ -113,20 +113,25 @@ namespace ClientWPFGUI
                 //this.listViewMessages.Items.Clear();
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    this.listViewMessages.Items.Clear();
-                    foreach (var mItem in  Service.Messages)
+                    for
+                    (
+                        int i= listViewMessages.Items.Count==0 ? 0 : listViewMessages.Items.Count; 
+                        i<Service.Messages.Count;
+                        ++i
+                    )
                     {
                         ListViewItem item = new ListViewItem();
                         var data = new
-                        { 
-                            ID = mItem.Id, 
-                            User = mItem.Username, 
-                            Time = mItem.DateTime.ToShortDateString()+" "+ mItem.DateTime.ToShortTimeString()+":"+ mItem.DateTime.Second,
-                            Message = mItem.Content 
+                        {
+                            ID = Service.Messages[i].Id,
+                            User = Service.Messages[i].Username,
+                            Time = Service.Messages[i].DateTime,
+                            Message = Service.Messages[i].Content
                         };
                         item.Content = data;
-                        this.listViewMessages.Items.Add(item);
-                    } 
+                        if(!this.listViewMessages.Items.Contains(item))
+                            this.listViewMessages.Items.Add(item);
+                    }
                 }));
             });
         }
