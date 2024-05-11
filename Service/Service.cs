@@ -1,6 +1,7 @@
 ﻿using ModelsLibrary;
 using ModelsLibrary.Messages;
 using Newtonsoft.Json;
+using System.Reflection.Emit;
 using System.Text;
 using System.Windows;
 
@@ -103,7 +104,7 @@ namespace Service
                 throw;
             }
         }
-        public async Task PostAsyncDesktop(ModelsLibrary.Messages.MessageRequest message, Uri uri)
+        public async Task<int> PostAsyncDesktop(ModelsLibrary.Messages.MessageRequest message, Uri uri)
         {
             HttpClient client = new HttpClient();
             StringContent content = new StringContent
@@ -114,15 +115,19 @@ namespace Service
             );
 
 
+            HttpResponseMessage response;
             try
             {
-                HttpResponseMessage response = await client.PostAsync(uri, content);
+                response = await client.PostAsync(uri, content);
                 response.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException)
             {
                 MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
+                return 1;
             }
+
+            return 0;
         }
 
 
@@ -214,35 +219,45 @@ namespace Service
             });
         }
 
-        public async Task GetAsyncDesktop(Uri uri)
+        public async Task<int> GetAsyncDesktop(Uri uri)
         {
-            await Task.Run(async () =>
+            return await Task<int>.Run(async () =>
             {
                 HttpClient client = new HttpClient();
                 try
                 {
-                    HttpResponseMessage response = await client.GetAsync(uri);
-                    response.EnsureSuccessStatusCode();
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    try
+                    for(byte i=0;i!=6;++i)
                     {
-                        Messages = JsonConvert.DeserializeObject<List<MessageResponse>>(responseBody);
-                        if (Messages is null || Messages.Count == 0)
+                        using (HttpResponseMessage response = await client.GetAsync(uri))
                         {
-                            MessageBox.Show("Не удалось содать список сообщений", "Ошибка расшифровки", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
+                            response.EnsureSuccessStatusCode();
+                            string responseBody = await response.Content.ReadAsStringAsync();
+
+                            try
+                            {
+                                Messages = JsonConvert.DeserializeObject<List<MessageResponse>>(responseBody);
+                                if (Messages is null || Messages.Count == 0)
+                                {
+                                    if(i==5)
+                                    {
+                                        MessageBox.Show("Не удалось содать список сообщений", "Ошибка расшифровки", MessageBoxButton.OK, MessageBoxImage.Error);
+                                        return 1;
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Thread.Sleep(1000);
                     }
                 }
                 catch (HttpRequestException e)
                 {
                     MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+                return 0;
             });
         }
 
@@ -261,8 +276,9 @@ namespace Service
         {
             await PostAsync(message, this.Uri);
         }
-        public async void PostAsyncDesktop(ModelsLibrary.Messages.MessageRequest message)
+        public async Task<int> PostAsyncDesktop(ModelsLibrary.Messages.MessageRequest message)
         {
+            return 
             await PostAsyncDesktop(message, this.Uri);
         }
 

@@ -35,39 +35,47 @@ namespace ClientWPFGUI
             this.UserNameBox.Text = userSettingsManager.Username;
         }
 
-        private void SendMessage_Click(object sender, RoutedEventArgs e)
+        private async void SendMessage_Click(object sender, RoutedEventArgs e)
         {
-            try
+            await Task.Run(() =>
             {
-                Service.SetNewAddress(this.IPBox.Text,this.PortBox.Text);
-            }
-            catch
-            {
-                MessageBox.Show("Неверный адрес сервера", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+                try
+                {
+                    Dispatcher.Invoke(() => {Service.SetNewAddress(this.IPBox.Text,this.PortBox.Text); });
+                    
+                }
+                catch
+                {
+                    MessageBox.Show("Неверный адрес сервера", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
 
 
-            try
-            {
-                Service.PostAsyncDesktop
-                (
-                    new ModelsLibrary.Messages.MessageRequest
-                    (
-                        this.Input.Text, userSettingsManager.Username
-                    )
-                );
-                UpdateView();
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message,"Ошибка",MessageBoxButton.OK,MessageBoxImage.Error);
-            }
+                try
+                {
+                    ModelsLibrary.Messages.MessageRequest msg=new ModelsLibrary.Messages.MessageRequest();
+                    Dispatcher.Invoke(() =>
+                    {
+                        msg = 
+                        new ModelsLibrary.Messages.MessageRequest(this.Input.Text, userSettingsManager.Username);
+                    });
+
+                    int res= Service.PostAsyncDesktop(msg).Result;
+
+
+
+                    UpdateView();
+                }
+                catch (System.Net.Http.HttpRequestException)
+                {
+                    MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message,"Ошибка",MessageBoxButton.OK,MessageBoxImage.Error);
+                }
+            });
         }
 
 
@@ -76,16 +84,15 @@ namespace ClientWPFGUI
         {
             Task.Run(() =>
             {
-                Thread.Sleep(2000);
                 Service.GetAsyncDesktop();
 
 
                 bool serverFailed=false;
                 serverFailed = Task.Run<bool>(() =>
                 {
-                    for (byte i=0;i!=50;++i)
+                    for (byte i=0;i!=100;++i)
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                         if (Service.Messages.Count != 0)
                             return false;
                     }

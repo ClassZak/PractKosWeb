@@ -50,7 +50,7 @@
                 Name="IPBox"
                 Grid.Column="1" 
                 Margin="10,10,50,10"
-                Text="localhost"
+                Text="127.0.0.1"
                 />
             
             
