@@ -8,20 +8,71 @@ namespace ModelsLibrary.UserModels
 {
     public class User : AUser
     {
+        public string Token {  get; set; }
         #region Constructors
         public User() : base()
         {
+            Token=GenerateToken();
         }
-        public User(string name, string password, string token) : base(name,password,token)
+        public User(string name, string password) : base(name,password)
         {
+            Token = GenerateToken();
         }
-        public User(User userAuthorizationArg) :
-            base(userAuthorizationArg.Name, userAuthorizationArg.Password,userAuthorizationArg.Token)
+        public User(User user) :
+            base(user.Name, user.Password)
         {
+            Token = GenerateToken();
         }
-        public User(User userAuthorizationArg,string token) : base(userAuthorizationArg)
+
+        public User(UserAuthorizationArg user): this(user.Name,user.Password)
         {
+            Token = GenerateToken();
         }
         #endregion
+        #region Overrided methods
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+                return false;
+            User? ob =obj as User;
+            if(ob is null)
+                return false;
+
+            return ob.Name==Name;
+        }
+        #endregion
+
+
+        public static bool operator==(User left, User right)
+        {
+            return left.Equals(right);
+        }
+        public static bool operator !=(User left, User right)
+        {
+            return !left.Equals(right);
+        }
+
+
+        
+        private string GenerateToken()
+        {
+            Random random = new Random();
+            int times = 64 + random.Next(64);
+            if (times == 0)
+                ++times;
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i != times; ++i)
+                stringBuilder.Append((char)(random.Next(0x10000) + 1));
+
+            return stringBuilder.ToString();
+        }
+        public void RegenerateToken()
+        {
+            Token=GenerateToken();
+        }
     }
 }
