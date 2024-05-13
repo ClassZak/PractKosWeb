@@ -1,5 +1,6 @@
 ﻿using ModelsLibrary;
 using ModelsLibrary.Messages;
+using ModelsLibrary.UserModels;
 using Newtonsoft.Json;
 using System.Reflection.Emit;
 using System.Text;
@@ -49,7 +50,7 @@ namespace Service
 
 
 
-
+        #region Message requests
         public void Post(ModelsLibrary.Messages.MessageRequest message, Uri uri)
         {
             HttpClient client = new HttpClient();
@@ -129,11 +130,6 @@ namespace Service
 
             return 0;
         }
-
-
-
-
-
 
 
 
@@ -296,5 +292,139 @@ namespace Service
         {
             await GetAsyncDesktop(this.Uri);
         }
+        #endregion
+        #region User requests
+        public async Task<KeyValuePair<int,string>> PostAsyncDesktopRegistration(UserAuthorizationArg newUser, Uri uri)
+        {
+            //Post_AddUser
+            HttpClient client = new HttpClient();
+            StringContent content = new StringContent
+            (
+                JsonConvert.SerializeObject(newUser),
+                Encoding.UTF8,
+                "application/json"
+            );
+            string Token;
+
+
+            HttpResponseMessage response;
+            try
+            {
+                response = client.PostAsync(uri, content).Result;
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    if (responseBody == "" || responseBody is null)
+                    {
+                        MessageBox.Show("Не удалось зарегистрироваться.\nПользователь с этим именем уже существует", "Ошибка регистрации", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return new KeyValuePair<int, string>(1,"");
+                    }
+                    else
+                    {
+                        MessageBox.Show(responseBody, "Токен:", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Token = responseBody;
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "Ошибка подтверждения регистрации", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return new KeyValuePair<int, string>(1, "");
+                }
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
+                return new KeyValuePair<int, string>(1, "");
+            }
+
+            return new KeyValuePair<int, string>(0, Token is null ? "" : Token);
+        }
+
+
+        public async Task<ModelsLibrary.UserModels.Enums.AuthorizationCode> PostAsyncDesktopAuthorization(User user, Uri uri)
+        {
+            //Post_Authorization
+            return await Task<ModelsLibrary.UserModels.Enums.AuthorizationCode>.Run(() =>
+            {
+                HttpClient client = new HttpClient();
+                StringContent content = new StringContent
+                (
+                    JsonConvert.SerializeObject(user),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+
+                HttpResponseMessage response;
+                try
+                {
+                    response = client.PostAsync(uri, content).Result;
+                    response.EnsureSuccessStatusCode();
+                    ModelsLibrary.UserModels.Enums.AuthorizationCode responseBody = 
+                        (ModelsLibrary.UserModels.Enums.AuthorizationCode)
+                        Convert.ToInt32(response.Content.ReadAsStringAsync().Result);
+                
+                    switch(responseBody)
+                    {
+                        case ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed:
+                            MessageBox.Show("Не удалось войти","Ошибка входа",MessageBoxButton.OK,MessageBoxImage.Error);
+                            break;
+                        case ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongType:
+                            MessageBox.Show
+                            (
+                                "Не удалось войти.\nСервер не смог обработать данные пользователя",
+                                "Ошибка входа",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error
+                            );
+                            break;
+                        case ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful:
+                            MessageBox.Show
+                            (
+                                "Вы авторизовались",
+                                "Успешный вход", 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Information
+                            );
+                            break;
+                        case ModelsLibrary.UserModels.Enums.AuthorizationCode.UserNoExists:
+                            MessageBox.Show
+                            (
+                                "Пользователя с таким именем не существует", 
+                                "Ошибка входа", 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Error
+                            );
+                            break;
+                        case ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongToken:
+                            MessageBox.Show
+                            (
+                                "Пользователь уже в сети", 
+                                "Ошибка входа", 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Error
+                            );
+                            break;
+                        case ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongPassword:
+                            MessageBox.Show
+                            (
+                                "Неверный пароль", 
+                                "Ошибка входа", 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Warning
+                            );
+                            break;
+                    }
+                    return responseBody;
+                }
+                catch (HttpRequestException)
+                {
+                    MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed;
+                }
+            });
+        }
+        #endregion
     }
 }

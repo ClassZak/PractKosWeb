@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ModelsLibrary.UserModels;
 using Service;
 
 namespace ClientWPFGUI
@@ -17,6 +18,8 @@ namespace ClientWPFGUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        static public User User = new();
+
         static private Service.Service Service =
             new Service.Service("localhost",5250);
 
@@ -25,6 +28,10 @@ namespace ClientWPFGUI
         {
             InitializeComponent();
             this.UserNameBox.Text=userSettingsManager.Username;
+
+
+            AuthorizationWindow window = new AuthorizationWindow();
+            window.ShowDialog();
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)

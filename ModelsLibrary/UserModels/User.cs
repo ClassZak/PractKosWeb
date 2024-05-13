@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +10,11 @@ namespace ModelsLibrary.UserModels
     public class User : AUser
     {
         public string Token {  get; set; }
+        public bool IsOnline = false;
         #region Constructors
         public User() : base()
         {
-            Token=GenerateToken();
+            Token= GenerateToken();
         }
         public User(string name, string password) : base(name,password)
         {
@@ -21,12 +23,21 @@ namespace ModelsLibrary.UserModels
         public User(User user) :
             base(user.Name, user.Password)
         {
-            Token = GenerateToken();
+            Token=user.Token;
+            IsOnline = user.IsOnline;
         }
 
         public User(UserAuthorizationArg user): this(user.Name,user.Password)
         {
             Token = GenerateToken();
+        }
+        public User(UserAuthorizationArg user, string token) : this(user)
+        {
+            this.Token = token;
+        }
+        public User(UserAuthorizationArg user,string token,bool isOnline) : this(user,token)
+        {
+            IsOnline = isOnline;
         }
         #endregion
         #region Overrided methods
@@ -58,7 +69,7 @@ namespace ModelsLibrary.UserModels
 
 
         
-        private string GenerateToken()
+        private static string GenerateToken()
         {
             Random random = new Random();
             int times = 64 + random.Next(64);
@@ -72,7 +83,9 @@ namespace ModelsLibrary.UserModels
         }
         public void RegenerateToken()
         {
-            Token=GenerateToken();
+            string oldToken=Token;
+            do Token = GenerateToken();
+            while (oldToken == Token);
         }
     }
 }

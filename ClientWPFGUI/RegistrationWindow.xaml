@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ClientWPFGUI"
         mc:Ignorable="d"
         Background="Azure"
-        Title="Регистрация" Height="200" Width="270">
+        Title="Регистрация" Height="250" Width="270">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
@@ -41,6 +41,7 @@
             VerticalAlignment="Center"
             Margin="30,0,30,0"
             Grid.Row="3"
+            Name="LoginTextBox"
             />
 
 
@@ -51,7 +52,7 @@
             Grid.Row="4"
             />
         <TextBox
-            Name="Password"
+            Name="PasswordTextBox"
             VerticalAlignment="Center"
             Margin="30,0,30,0"
             Grid.Row="5"
@@ -62,7 +63,7 @@
             Name="RegistrationButton"
             Margin="30,3,30,3"
             Grid.Row="6"
-            Content="Зарегистрироваться"
+            Content="Зарегистрироваться" Click="RegistrationButton_Click"
             />
     </Grid>
 </Window>
