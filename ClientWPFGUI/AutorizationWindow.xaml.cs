@@ -23,7 +23,6 @@ namespace ClientWPFGUI
     {
         public Service.Service Service = new();
         public User User = new User();
-        public string Token = "";
 
         public AuthorizationWindow()
         {
@@ -34,6 +33,9 @@ namespace ClientWPFGUI
         {
             RegistrationWindow registrationWindow = new RegistrationWindow();
             registrationWindow.ShowDialog();
+            User=new User(registrationWindow.User);
+            this.LoginTextBox.Text = User.Name;
+            this.PasswordTextBox.Text = User.Password;
         }
 
         private async void AthorizationButton_Click(object sender, RoutedEventArgs e)
@@ -49,12 +51,18 @@ namespace ClientWPFGUI
 
                 if (login == "" || password == "")
                 {
-                    MessageBox.Show("Введите логин и пароль", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show
+                    (
+                        "Введите логин и пароль", 
+                        "Ошибка ввода", 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Warning
+                    );
                     return;
                 }
                 else
                 {
-                    ModelsLibrary.UserModels.Enums.AuthorizationCode code =
+                    KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode,string> info =
                     Service.PostAsyncDesktopAuthorization
                     (
                         new ModelsLibrary.UserModels.User
@@ -64,9 +72,12 @@ namespace ClientWPFGUI
                         ),
                         new Uri("http://localhost:5250/api/User/Authorization")
                     ).Result;
-                    if (code == ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful)
+                    if (info.Key == ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful)
+                    {
+                        User = new User(login,password);
+                        User.Token=info.Value;
                         Dispatcher.Invoke(() => { Close(); });
-                        
+                    }
                 }
             });
         }

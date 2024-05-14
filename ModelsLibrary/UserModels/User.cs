@@ -10,7 +10,6 @@ namespace ModelsLibrary.UserModels
     public class User : AUser
     {
         public string Token {  get; set; }
-        public bool IsOnline = false;
         #region Constructors
         public User() : base()
         {
@@ -24,7 +23,6 @@ namespace ModelsLibrary.UserModels
             base(user.Name, user.Password)
         {
             Token=user.Token;
-            IsOnline = user.IsOnline;
         }
 
         public User(UserAuthorizationArg user): this(user.Name,user.Password)
@@ -34,10 +32,6 @@ namespace ModelsLibrary.UserModels
         public User(UserAuthorizationArg user, string token) : this(user)
         {
             this.Token = token;
-        }
-        public User(UserAuthorizationArg user,string token,bool isOnline) : this(user,token)
-        {
-            IsOnline = isOnline;
         }
         #endregion
         #region Overrided methods

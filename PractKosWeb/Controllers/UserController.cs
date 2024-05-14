@@ -58,37 +58,74 @@ namespace PractKosWeb.Controllers
             );
         }
         [HttpPost("Authorization")]
-        public ActionResult<ModelsLibrary.UserModels.Enums.AuthorizationCode>
+        public ActionResult<KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode,string>>
             Post_Authorization([FromBody] User user)
         {
             try
             {
                 if (user is null)
-                    return Ok(ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongType);
+                    return Ok
+                    (
+                        new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode,string>
+                        (
+                            ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongType,""
+                        )
+                    );
                 if(!_users.Contains(user))
-                    return Ok(ModelsLibrary.UserModels.Enums.AuthorizationCode.UserNoExists);
-                if (!_users.Find(x=> x.Name== user.Name).IsOnline)
+                    return Ok
+                    (
+                        new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>
+                        (
+                            ModelsLibrary.UserModels.Enums.AuthorizationCode.UserNoExists,
+                            ""
+                        )
+                    );
+                if (_users.IndexOf(user) !=-1)
                 {
-                    if(_users.Find(x => x.Name == user.Name).Password==user.Password)
+                    if(_users.ElementAt(_users.IndexOf(user)).Password==user.Password)
                     {
-                        _users.Find(x => x.Name == user.Name).IsOnline=true;
-                        _users.Find(x => x.Name == user.Name).RegenerateToken();
-                        return Ok(ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful);
+                        _users.ElementAt(_users.IndexOf(user)).RegenerateToken();
+                        if (user.Token != _users.ElementAt(_users.IndexOf(user)).Token)
+                            _users.ElementAt(_users.IndexOf(user)).RegenerateToken();
+                        return Ok
+                        (
+                            new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>
+                            (
+                                ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful, 
+                                _users.ElementAt(_users.IndexOf(user)).Token
+                            )
+                        );
                     }
                     else
-                        return Ok(ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongPassword);
-                }
-                else if(user.Token== _users.Find(x => x.Name == user.Name).Token)
-                {
-                    return Ok(ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful);
+                        return Ok
+                        (
+                            new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>
+                            (
+                                ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongPassword,
+                                ""
+                            )
+                        );
                 }
                 else
-                    return Ok(ModelsLibrary.UserModels.Enums.AuthorizationCode.WrongToken);
-
+                    return Ok
+                    (
+                        new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>
+                        (
+                            ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed,
+                            ""
+                        )
+                    );
             }
             catch
             {
-                return Ok(ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed);
+                return Ok
+                (
+                    new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>
+                    (
+                        ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed,
+                        ""
+                    )
+                );
             }
         }
     }

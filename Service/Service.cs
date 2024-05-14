@@ -342,10 +342,10 @@ namespace Service
         }
 
 
-        public async Task<ModelsLibrary.UserModels.Enums.AuthorizationCode> PostAsyncDesktopAuthorization(User user, Uri uri)
+        public async Task<KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode,string>> PostAsyncDesktopAuthorization(User user, Uri uri)
         {
             //Post_Authorization
-            return await Task<ModelsLibrary.UserModels.Enums.AuthorizationCode>.Run(() =>
+            return await Task<KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>>.Run(() =>
             {
                 HttpClient client = new HttpClient();
                 StringContent content = new StringContent
@@ -361,11 +361,11 @@ namespace Service
                 {
                     response = client.PostAsync(uri, content).Result;
                     response.EnsureSuccessStatusCode();
-                    ModelsLibrary.UserModels.Enums.AuthorizationCode responseBody = 
-                        (ModelsLibrary.UserModels.Enums.AuthorizationCode)
-                        Convert.ToInt32(response.Content.ReadAsStringAsync().Result);
+                    KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string> responseBody =
+                    JsonConvert.DeserializeObject<KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>>(response.Content.ReadAsStringAsync().Result);
+                        
                 
-                    switch(responseBody)
+                    switch(responseBody.Key)
                     {
                         case ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed:
                             MessageBox.Show("Не удалось войти","Ошибка входа",MessageBoxButton.OK,MessageBoxImage.Error);
@@ -416,12 +416,12 @@ namespace Service
                             );
                             break;
                     }
-                    return responseBody;
+                    return new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>(responseBody.Key, responseBody.Value);
                 }
                 catch (HttpRequestException)
                 {
                     MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed;
+                    return new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode,string>(ModelsLibrary.UserModels.Enums.AuthorizationCode.AuthorizationFailed,"");
                 }
             });
         }

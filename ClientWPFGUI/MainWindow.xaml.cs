@@ -32,14 +32,21 @@ namespace ClientWPFGUI
 
             AuthorizationWindow window = new AuthorizationWindow();
             window.ShowDialog();
+            User = new User(window.User);
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
         {
-            UsernameDialog dlg = new UsernameDialog(userSettingsManager.Username);
+            /*UsernameDialog dlg = new UsernameDialog(userSettingsManager.Username);
             dlg.ShowDialog();
             userSettingsManager.SetUsername(dlg.username);
-            this.UserNameBox.Text = userSettingsManager.Username;
+            this.UserNameBox.Text = userSettingsManager.Username;*/
+
+            AuthorizationWindow window = new AuthorizationWindow();
+            window.ShowDialog();
+            User = new User(window.User);
+
+            this.UserNameBox.Text = User.Name;
         }
 
         private async void SendMessage_Click(object sender, RoutedEventArgs e)

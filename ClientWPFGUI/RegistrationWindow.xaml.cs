@@ -43,8 +43,7 @@ namespace ClientWPFGUI
 
             if (Token != "")
             {
-                this.LoginTextBox.Text = Token;
-                User = new User(userAuthorizationArg, Token, true);
+                User = new User(userAuthorizationArg, Token);
                 MessageBox.Show($"Ваш логин:\n{User.Name}\nВаш пароль:\n{User.Password}\nВаш токен:\n{User.Token}");
             }
         }
