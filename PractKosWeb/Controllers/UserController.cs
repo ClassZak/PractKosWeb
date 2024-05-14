@@ -84,9 +84,10 @@ namespace PractKosWeb.Controllers
                 {
                     if(_users.ElementAt(_users.IndexOf(user)).Password==user.Password)
                     {
-                        _users.ElementAt(_users.IndexOf(user)).RegenerateToken();
-                        if (user.Token != _users.ElementAt(_users.IndexOf(user)).Token)
-                            _users.ElementAt(_users.IndexOf(user)).RegenerateToken();
+                        do _users.ElementAt(_users.IndexOf(user)).RegenerateToken();
+                        while (_users.Count(x => x.Token == _users.ElementAt(_users.IndexOf(user)).Token)>1);
+                        //Unique tokens
+
                         return Ok
                         (
                             new KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string>
