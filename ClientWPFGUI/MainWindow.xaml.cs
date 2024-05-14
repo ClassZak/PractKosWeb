@@ -23,12 +23,9 @@ namespace ClientWPFGUI
         static private Service.Service Service =
             new Service.Service("localhost",5250);
 
-        static private UserSettingsManager userSettingsManager = new UserSettingsManager();
         public MainWindow()
         {
             InitializeComponent();
-
-            this.UserNameBox.Text=userSettingsManager.Username;
             AuthorizationWindow window = new AuthorizationWindow();
             window.ShowDialog();
             
@@ -44,12 +41,7 @@ namespace ClientWPFGUI
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
         {
-            /*UsernameDialog dlg = new UsernameDialog(userSettingsManager.Username);
-            dlg.ShowDialog();
-            userSettingsManager.SetUsername(dlg.username);
-            this.UserNameBox.Text = userSettingsManager.Username;*/
-
-            AuthorizationWindow window = new AuthorizationWindow();
+            AuthorizationWindow window = new();
             window.ShowDialog();
             User = new User(window.User);
 
@@ -76,7 +68,7 @@ namespace ClientWPFGUI
 
                 try
                 {
-                    ModelsLibrary.Messages.MessageRequest msg=new ModelsLibrary.Messages.MessageRequest();
+                    ModelsLibrary.Messages.MessageRequest msg=new();
                     Dispatcher.Invoke(() =>
                     {
                         msg = 
@@ -142,7 +134,7 @@ namespace ClientWPFGUI
                         ++i
                     )
                     {
-                        ListViewItem item = new ListViewItem();
+                        ListViewItem item = new();
                         var data = new
                         {
                             ID = Service.Messages[i].Id,
