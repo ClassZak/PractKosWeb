@@ -13,7 +13,7 @@
 
 
         public MessageResponse(MessageRequest messageRequest)
-            : base(messageRequest.Content,messageRequest.Username)
+            : base(messageRequest.Content,messageRequest.Token)
         {
             DateTime = DateTime.Now;
         }

@@ -146,7 +146,7 @@ namespace ClientWPFGUI
                         var data = new
                         {
                             ID = Service.Messages[i].Id,
-                            User = Service.Messages[i].Username,
+                            User = Service.Messages[i].Token,
                             Time = Service.Messages[i].DateTime,
                             Message = Service.Messages[i].Content
                         };
