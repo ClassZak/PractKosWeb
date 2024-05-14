@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ModelsLibrary.Messages;
+using PractKosWeb.Controllers;
 
 namespace WebApplication2.Controllers
 {
@@ -18,9 +19,17 @@ namespace WebApplication2.Controllers
         [HttpPost]
         public ActionResult Post([FromBody] MessageRequest message)
         {
-            
-            messages.Add(new MessageResponse(message, messages.Count));
-            return Ok();
+            ModelsLibrary.UserModels.User? user = UserController.GetUsersList().Find(x => x.Token == message.Token);
+
+            string? UserName = user is not null ? user.Name : null;
+
+            if(user is not null)
+            {
+                messages.Add(new MessageResponse(message,user.Name, messages.Count));
+                return Ok();
+            }
+            else
+                return BadRequest();
         }
         [HttpPost("ClearMessages")]
         public ActionResult Post_ClearMessages()

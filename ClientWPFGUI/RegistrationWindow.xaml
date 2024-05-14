@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ClientWPFGUI"
         mc:Ignorable="d"
         Background="Azure"
-        Title="Регистрация" Height="250" Width="270">
+        Title="Регистрация" Height="250" Width="270" Icon="/RegistrationIcon.bmp">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>

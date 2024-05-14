@@ -8,6 +8,10 @@ namespace PractKosWeb.Controllers
     public class UserController : ControllerBase
     {
         private static List<ModelsLibrary.UserModels.User> _users = new();
+        public static List<ModelsLibrary.UserModels.User> GetUsersList()
+        {
+            return _users;
+        }
 
 
         [HttpGet("GetList")]

@@ -234,12 +234,14 @@ namespace Service
                                 Messages = JsonConvert.DeserializeObject<List<MessageResponse>>(responseBody);
                                 if (Messages is null || Messages.Count == 0)
                                 {
-                                    if(i==5)
+                                    if (i == 5)
                                     {
                                         MessageBox.Show("Не удалось содать список сообщений", "Ошибка расшифровки", MessageBoxButton.OK, MessageBoxImage.Error);
                                         return 1;
                                     }
                                 }
+                                else
+                                    break;
                             }
                             catch (Exception e)
                             {

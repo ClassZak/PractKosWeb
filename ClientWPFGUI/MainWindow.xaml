@@ -6,9 +6,10 @@
         xmlns:local="clr-namespace:ClientWPFGUI"
         mc:Ignorable="d"
         Title="Messanger"
+        Icon="/Icon.bmp"
         Height="430" Width="640"
         MinHeight="430" MinWidth="640" 
-        Background="AliceBlue"
+        Background="AliceBlue" 
         >
     <Grid>
 

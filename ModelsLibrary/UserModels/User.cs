@@ -67,13 +67,45 @@ namespace ModelsLibrary.UserModels
         {
             Random random = new Random();
             int times = 64 + random.Next(64);
-            if (times == 0)
-                ++times;
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i != times; ++i)
-                stringBuilder.Append((char)(random.Next(0x10000) + 1));
+            //if (times == 0)
+            //    ++times;
+            //StringBuilder stringBuilder = new StringBuilder();
+            //for (int i = 0; i != times; ++i)
+            //    stringBuilder.Append((char)(random.Next(0x10000) + 1));
 
-            return stringBuilder.ToString();
+            //return stringBuilder.ToString();
+
+
+            return GenerateRandomString(times);
+        }
+
+
+        const string latinChars = "\u0020\u007E"; // Диапазон латинских символов
+        const string cyrillicChars = "\u0400\u04FF"; // Диапазон кириллических символов
+        const string chineseChars = "\u4E00\u9FFF"; // Диапазон китайских символов
+        const string arabicChars = "\u0600\u06FF"; // Диапазон арабских символов
+        static string GenerateRandomString(int length)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0;i<length;++i)
+                sb.Append(GetRandomChar());
+
+            return sb.ToString();
+        }
+        static char GetRandomChar()
+        {
+            Random r = new Random();
+            char result;
+            do
+                result = (char)r.Next(0x10000 + 1);
+            while (!(
+            result >= latinChars[0] && result <= latinChars[1] ||
+            result >= cyrillicChars[0] && result <= cyrillicChars[1] ||
+            result >= chineseChars[0] && result <= chineseChars[1] ||
+            result >= arabicChars[0] && result <= arabicChars[1]));
+
+            return result;
         }
         public void RegenerateToken()
         {

@@ -28,18 +28,18 @@ namespace ClientWPFGUI
         {
             InitializeComponent();
 
-
             this.UserNameBox.Text=userSettingsManager.Username;
-
-
-
-
             AuthorizationWindow window = new AuthorizationWindow();
             window.ShowDialog();
-            User = new User(window.User);
+            
 
+            User = new User(window.User);
             if (window.UserChanged)
                 this.UserNameBox.Text = User.Name;
+            
+            
+            if (!window.UserChanged)
+                this.Close();
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
@@ -49,7 +49,7 @@ namespace ClientWPFGUI
             userSettingsManager.SetUsername(dlg.username);
             this.UserNameBox.Text = userSettingsManager.Username;*/
 
-            AuthorizationWindow window = new AuthorizationWindow(false);
+            AuthorizationWindow window = new AuthorizationWindow();
             window.ShowDialog();
             User = new User(window.User);
 
@@ -80,7 +80,7 @@ namespace ClientWPFGUI
                     Dispatcher.Invoke(() =>
                     {
                         msg = 
-                        new ModelsLibrary.Messages.MessageRequest(this.Input.Text, User.Name);
+                        new ModelsLibrary.Messages.MessageRequest(this.Input.Text, User.Token);
                     });
 
                     int res= Service.PostAsyncDesktop(msg).Result;
@@ -146,7 +146,7 @@ namespace ClientWPFGUI
                         var data = new
                         {
                             ID = Service.Messages[i].Id,
-                            User = Service.Messages[i].Token,
+                            User = Service.Messages[i].Usename,
                             Time = Service.Messages[i].DateTime,
                             Message = Service.Messages[i].Content
                         };

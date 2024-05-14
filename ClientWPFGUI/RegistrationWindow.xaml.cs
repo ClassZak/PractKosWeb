@@ -24,29 +24,67 @@ namespace ClientWPFGUI
     {
         public Service.Service Service = new();
         public User User = new User();
+        private bool registrationRequested=false;
         public RegistrationWindow()
         {
             InitializeComponent();
         }
 
-        private void RegistrationButton_Click(object sender, RoutedEventArgs e)
+        private async void RegistrationButton_Click(object sender, RoutedEventArgs e)
         {
-            UserAuthorizationArg userAuthorizationArg =
-            new UserAuthorizationArg(this.LoginTextBox.Text, this.PasswordTextBox.Text);
-
-            string Token=
-            Service.PostAsyncDesktopRegistration
-            (
-                userAuthorizationArg,
-                new Uri("http://localhost:5250/api/User/AddUser")
-            ).Result.Value;
-
-            if (Token != "")
+            await Task.Run(() =>
             {
-                User = new User(userAuthorizationArg, Token);
-                MessageBox.Show($"Ваш логин:\n{User.Name}\nВаш пароль:\n{User.Password}\nВаш токен:\n{User.Token}");
-                Close();
-            }
+                try
+                {
+                    if (!registrationRequested)
+                        registrationRequested = true;
+                    else
+                        return;
+
+                    string login = "", password = "";
+                    Dispatcher.Invoke(() =>
+                    {
+                        login = this.LoginTextBox.Text;
+                        password = this.PasswordTextBox.Text;
+                    });
+                    if (login == "" || password == "")
+                    {
+                        MessageBox.Show
+                        (
+                            "Введите логин и пароль",
+                            "Ошибка ввода",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning
+                        );
+                        return;
+                    }
+
+                    UserAuthorizationArg userAuthorizationArg =
+                    new UserAuthorizationArg(login, password);
+
+
+
+
+                    string Token=
+                    Service.PostAsyncDesktopRegistration
+                    (
+                        userAuthorizationArg,
+                        new Uri("http://localhost:5250/api/User/AddUser")
+                    ).Result.Value;
+
+                    if (Token != "")
+                    {
+                        User = new User(userAuthorizationArg, Token);
+                        MessageBox.Show($"Ваш логин:\n{User.Name}\nВаш пароль:\n{User.Password}\nВаш токен:\n{User.Token}");
+                        Dispatcher.Invoke(() => { Close(); });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message,"Ошибка регистрации",MessageBoxButton.OK, MessageBoxImage.Error);
+                    registrationRequested = false;
+                }
+            });
         }
     }
 }

@@ -9,11 +9,43 @@
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="AuthorizationIcon.bmp" />
+    <None Remove="Icon.bmp" />
+    <None Remove="RegistrationIcon.bmp" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ModelsLibrary\ModelsLibrary.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="AuthorizationIcon.bmp" />
+    <Resource Include="Icon.bmp" />
+    <Resource Include="RegistrationIcon.bmp" />
   </ItemGroup>
 
 </Project>

@@ -3,19 +3,16 @@
     public abstract class AMessage
     {
         public string Content { get; set; }
-        public string Token { get; set; }
 
 
         public AMessage()
         {
             Content = "";
-            Token = "";
         }
 
-        public AMessage(string Content, string Username)
+        public AMessage(string Content)
         {
             this.Content = Content;
-            this.Token = Username;
         }
     }
 }
