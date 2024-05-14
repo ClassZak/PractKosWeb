@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientWPFGUI"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         Background="Azure"
         Title="Авторизация" Height="250" Width="270">
     <Grid>

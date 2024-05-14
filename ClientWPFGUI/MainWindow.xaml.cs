@@ -27,12 +27,19 @@ namespace ClientWPFGUI
         public MainWindow()
         {
             InitializeComponent();
+
+
             this.UserNameBox.Text=userSettingsManager.Username;
+
+
 
 
             AuthorizationWindow window = new AuthorizationWindow();
             window.ShowDialog();
             User = new User(window.User);
+
+            if (window.UserChanged)
+                this.UserNameBox.Text = User.Name;
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
@@ -42,11 +49,12 @@ namespace ClientWPFGUI
             userSettingsManager.SetUsername(dlg.username);
             this.UserNameBox.Text = userSettingsManager.Username;*/
 
-            AuthorizationWindow window = new AuthorizationWindow();
+            AuthorizationWindow window = new AuthorizationWindow(false);
             window.ShowDialog();
             User = new User(window.User);
 
-            this.UserNameBox.Text = User.Name;
+            if(window.UserChanged)
+                this.UserNameBox.Text = User.Name;
         }
 
         private async void SendMessage_Click(object sender, RoutedEventArgs e)

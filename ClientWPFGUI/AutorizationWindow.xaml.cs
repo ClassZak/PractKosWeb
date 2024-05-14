@@ -23,10 +23,18 @@ namespace ClientWPFGUI
     {
         public Service.Service Service = new();
         public User User = new User();
+        public bool IsWelcomeWindow = true;
+        public bool UserChanged=false;
 
         public AuthorizationWindow()
         {
             InitializeComponent();
+            //if(WelcomeWindow)
+            //    this.
+        }
+        public AuthorizationWindow(bool  isWelcomeWindow):this()
+        {
+            IsWelcomeWindow=isWelcomeWindow;
         }
 
         private void RegistrationButton_Click(object sender, RoutedEventArgs e)
@@ -76,10 +84,20 @@ namespace ClientWPFGUI
                     {
                         User = new User(login,password);
                         User.Token=info.Value;
-                        Dispatcher.Invoke(() => { Close(); });
+                        Dispatcher.Invoke(() =>
+                        {
+                            IsWelcomeWindow = false;
+                            UserChanged = true;
+                            Close();
+                        });
                     }
                 }
             });
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = IsWelcomeWindow;
         }
     }
 }

@@ -45,6 +45,7 @@ namespace ClientWPFGUI
             {
                 User = new User(userAuthorizationArg, Token);
                 MessageBox.Show($"Ваш логин:\n{User.Name}\nВаш пароль:\n{User.Password}\nВаш токен:\n{User.Token}");
+                Close();
             }
         }
     }
