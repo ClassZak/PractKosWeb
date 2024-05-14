@@ -22,5 +22,11 @@ namespace WebApplication2.Controllers
             messages.Add(new MessageResponse(message, messages.Count));
             return Ok();
         }
+        [HttpPost("ClearMessages")]
+        public ActionResult Post_ClearMessages()
+        {
+            messages.Clear();
+            return Ok();
+        }
     }
 }

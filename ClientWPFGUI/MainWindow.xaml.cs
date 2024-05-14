@@ -80,7 +80,7 @@ namespace ClientWPFGUI
                     Dispatcher.Invoke(() =>
                     {
                         msg = 
-                        new ModelsLibrary.Messages.MessageRequest(this.Input.Text, userSettingsManager.Username);
+                        new ModelsLibrary.Messages.MessageRequest(this.Input.Text, User.Name);
                     });
 
                     int res= Service.PostAsyncDesktop(msg).Result;
