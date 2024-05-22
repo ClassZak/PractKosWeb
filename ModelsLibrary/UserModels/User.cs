@@ -96,14 +96,26 @@ namespace ModelsLibrary.UserModels
         static char GetRandomChar()
         {
             Random r = new Random();
-            char result;
+            byte type = (byte)r.Next(0x100);
+            char result='\0';
+
             do
-                result = (char)r.Next(0x10000 + 1);
-            while (!(
-            result >= latinChars[0] && result <= latinChars[1] ||
-            result >= cyrillicChars[0] && result <= cyrillicChars[1] ||
-            result >= chineseChars[0] && result <= chineseChars[1] ||
-            result >= arabicChars[0] && result <= arabicChars[1]));
+            {
+                if (type >= 0 && type <= 80)
+                    result = (char)((int)latinChars[0] + r.Next((int)latinChars[1] - (int)latinChars[0]));
+                else
+                if (type > 80 && type <= 160)
+                    result = (char)((int)cyrillicChars[0] + r.Next((int)cyrillicChars[1] - (int)cyrillicChars[0]));
+                else
+                if (type > 160 && type <= 192)
+                    result = (char)((int)chineseChars[0] + r.Next((int)chineseChars[1] - (int)chineseChars[0]));
+                else
+                if (type > 192 && type <= 255)
+                    result = (char)((int)arabicChars[0] + r.Next((int)arabicChars[1] - (int)arabicChars[0]));
+                else
+                    result = '\0';
+            }
+            while (result == '\0');
 
             return result;
         }

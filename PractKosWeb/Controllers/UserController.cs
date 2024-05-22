@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//#define USER_DEBUG_MODE
+
+
+using Microsoft.AspNetCore.Mvc;
 using ModelsLibrary.UserModels;
+
 
 namespace PractKosWeb.Controllers
 {
@@ -20,12 +24,14 @@ namespace PractKosWeb.Controllers
             return Ok(_users);
         }
 
+#if USER_DEBUG_MODE
         [HttpPost("ClearUsers")]
         public ActionResult Post_ClearUsers()
         {
             _users.Clear();
             return Ok();
         }
+#endif
         [HttpPost("AddUser")]
         public ActionResult<string> Post_AddUser([FromBody] UserAuthorizationArg user)
         {

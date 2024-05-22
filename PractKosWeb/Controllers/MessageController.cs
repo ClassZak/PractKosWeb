@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//#define MESSAGES_DEBUG_MODE
+
+
+using Microsoft.AspNetCore.Mvc;
 using ModelsLibrary.Messages;
 using PractKosWeb.Controllers;
+
 
 namespace WebApplication2.Controllers
 {
@@ -19,23 +23,30 @@ namespace WebApplication2.Controllers
         [HttpPost]
         public ActionResult Post([FromBody] MessageRequest message)
         {
-            ModelsLibrary.UserModels.User? user = UserController.GetUsersList().Find(x => x.Token == message.Token);
+            if (message.Content.Length >= 512)
+                return BadRequest(413);
 
-            string? UserName = user is not null ? user.Name : null;
+            ModelsLibrary.UserModels.User? user = UserController.GetUsersList().Find(x => x.Token == message.Token);
 
             if(user is not null)
             {
+                if(messages.Find(x=> x.Usename==user.Name) is not null)
+                if((DateTime.Now-messages.Last(x=> x.Usename== user.Name).DateTime).TotalSeconds<5)
+                    return BadRequest(413);
+
                 messages.Add(new MessageResponse(message,user.Name, messages.Count));
                 return Ok();
             }
             else
                 return BadRequest();
         }
+#if MESSAGES_DEBUG_MODE
         [HttpPost("ClearMessages")]
         public ActionResult Post_ClearMessages()
         {
             messages.Clear();
             return Ok();
         }
+#endif
     }
 }

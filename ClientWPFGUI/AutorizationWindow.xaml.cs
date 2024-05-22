@@ -22,8 +22,10 @@ namespace ClientWPFGUI
     public partial class AuthorizationWindow : Window
     {
         public Service.Service Service = new();
-        public User User = new User();
+        public User User = new();
         public bool UserChanged=false;
+
+        private bool autorizationButtonClicked = false;
 
         public AuthorizationWindow()
         {
@@ -34,7 +36,7 @@ namespace ClientWPFGUI
 
         private void RegistrationButton_Click(object sender, RoutedEventArgs e)
         {
-            RegistrationWindow registrationWindow = new RegistrationWindow();
+            RegistrationWindow registrationWindow = new(this.LoginTextBox.Text, this.PasswordTextBox.Text);
             registrationWindow.ShowDialog();
             User=new User(registrationWindow.User);
             this.LoginTextBox.Text = User.Name;
@@ -45,46 +47,62 @@ namespace ClientWPFGUI
         {
             await Task.Run(() =>
             {
-                string login="",password="";
-                Dispatcher.Invoke(() =>
+                if(autorizationButtonClicked)
                 {
-                    login = this.LoginTextBox.Text;
-                    password = this.PasswordTextBox.Text;
-                });
-
-                if (login == "" || password == "")
-                {
-                    MessageBox.Show
-                    (
-                        "Введите логин и пароль", 
-                        "Ошибка ввода", 
-                        MessageBoxButton.OK, 
-                        MessageBoxImage.Warning
-                    );
-                    return;
+                    MessageBox.Show("Запрос на авторизацию уже отправлен", "Ошибка входа", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {
-                    KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode,string> info =
-                    Service.PostAsyncDesktopAuthorization
-                    (
-                        new ModelsLibrary.UserModels.User
-                        (
-                            login,
-                            password
-                        ),
-                        new Uri("http://localhost:5250/api/User/Authorization")
-                    ).Result;
-                    if (info.Key == ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful)
+                    autorizationButtonClicked = true;
+                    string login = "", password = "";
+                    Dispatcher.Invoke(() =>
                     {
-                        User = new User(login,password);
-                        User.Token=info.Value;
-                        Dispatcher.Invoke(() =>
-                        {
-                            UserChanged = true;
-                            Close();
-                        });
+                        login = this.LoginTextBox.Text;
+                        password = this.PasswordTextBox.Text;
+                    });
+
+                    if (login == "" || password == "")
+                    {
+                        MessageBox.Show
+                        (
+                            "Введите логин и пароль",
+                            "Ошибка ввода",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning
+                        );
+                        return;
                     }
+                    else
+                    {
+                        try
+                        {
+                            KeyValuePair<ModelsLibrary.UserModels.Enums.AuthorizationCode, string> info =
+                            Service.PostAsyncDesktopAuthorization
+                            (
+                                new ModelsLibrary.UserModels.User
+                                (
+                                    login,
+                                    password
+                                ),
+                                new Uri("http://localhost:5250/api/User/Authorization")
+                            ).Result;
+                            if (info.Key == ModelsLibrary.UserModels.Enums.AuthorizationCode.AthorizedSuccessful)
+                            {
+                                User = new(login, password);
+                                User.Token = info.Value;
+                                Dispatcher.Invoke(() =>
+                                {
+                                    UserChanged = true;
+                                    Close();
+                                });
+                            }
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Не удалось авторизоваться\nОшибка доступа к серверу", "Ошибка входа", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    autorizationButtonClicked = false;
                 }
             });
         }
