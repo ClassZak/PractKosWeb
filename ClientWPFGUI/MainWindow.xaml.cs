@@ -18,6 +18,8 @@ namespace ClientWPFGUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Thread updateDataThread;
+        private bool closed = false;
         static public User User = new();
 
         static private Service.Service Service =
@@ -37,6 +39,9 @@ namespace ClientWPFGUI
             
             if (!window.UserChanged)
                 this.Close();
+
+            updateDataThread = new Thread(DataUpdating);
+            updateDataThread.Start();
         }
 
         private void UserNameUse_Click(object sender, RoutedEventArgs e)
@@ -53,10 +58,35 @@ namespace ClientWPFGUI
         {
             await Task.Run(() =>
             {
+                bool badInput=false;
+                Dispatcher.Invoke(() =>
+                {
+                    if (this.Input.Text is null)
+                    {
+                        MessageBox.Show("Неверный размер сообщения\nОно пустое", "Ошибка отправки", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        badInput = true;
+                        return;
+                    }
+
+                    if (this.Input.Text.Length >= 512)
+                    {
+                        MessageBox.Show("Неверный размер сообщения\nОно слишком большое", "Ошибка отправки", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        badInput=true;
+                        return;
+                    }
+                    else if (this.Input.Text.Length == 0)
+                    {
+                        MessageBox.Show("Неверный размер сообщения\nОно пустое", "Ошибка отправки", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        badInput = true;
+                        return;
+                    }
+                });
+
+                if (badInput)
+                    return;
                 try
                 {
                     Dispatcher.Invoke(() => {Service.SetNewAddress(this.IPBox.Text,this.PortBox.Text); });
-                    
                 }
                 catch
                 {
@@ -80,6 +110,7 @@ namespace ClientWPFGUI
 
 
                     UpdateView();
+                    Dispatcher.Invoke(() => {this.Input.Text = ""; });
                 }
                 catch (System.Net.Http.HttpRequestException)
                 {
@@ -94,7 +125,7 @@ namespace ClientWPFGUI
 
 
 
-        private void UpdateView()
+        private void UpdateView(bool showEmptyAnswerException=false)
         {
             Task.Run(() =>
             {
@@ -120,7 +151,7 @@ namespace ClientWPFGUI
 
                 if (Service.Messages.Count == 0)
                 {
-                    MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //MessageBox.Show("Нет элементов в списке сообщений", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -155,6 +186,36 @@ namespace ClientWPFGUI
         {
             if (!char.IsDigit(e.Text, e.Text.Length - 1))
                 e.Handled = true;
+        }
+
+
+
+        private void DataUpdating()
+        {
+            while (!this.closed)
+            {
+                try
+                {
+                    UpdateView();
+                    Thread.Sleep(1000);
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            closed=true;
+        }
+
+        private void Input_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SendMessage_Click(null, null);
+            }
         }
     }
 }

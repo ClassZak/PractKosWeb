@@ -236,7 +236,7 @@ namespace Service
                                 {
                                     if (i == 5)
                                     {
-                                        MessageBox.Show("Не удалось содать список сообщений", "Ошибка расшифровки", MessageBoxButton.OK, MessageBoxImage.Error);
+                                        //MessageBox.Show("Не удалось содать список сообщений", "Ошибка расшифровки", MessageBoxButton.OK, MessageBoxImage.Error);
                                         return 1;
                                     }
                                 }
@@ -245,7 +245,7 @@ namespace Service
                             }
                             catch (Exception e)
                             {
-                                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                                //MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
                         }
                         Thread.Sleep(1000);
@@ -253,7 +253,7 @@ namespace Service
                 }
                 catch (HttpRequestException e)
                 {
-                    MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //MessageBox.Show("Ошибка сервера\nПопробуйте обратиться к администратору", "Плохой запрос на сервер", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 return 0;
             });
@@ -324,7 +324,7 @@ namespace Service
                     }
                     else
                     {
-                        MessageBox.Show(responseBody, "Токен:", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show($"Пользователь {newUser.Name} зарегистрирован", "Успешная регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
                         Token = responseBody;
                     }
                 }
